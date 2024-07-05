@@ -5,10 +5,21 @@ import 'package:fastfixer_web/widgets/small_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-void main() {
+import 'package:firebase_core/firebase_core.dart';
+Future<void> main() async {
   Get.put(MenuController());
   Get.find<MenuController>();
+  await Firebase.initializeApp(
+    options: FirebaseOptions(
+      apiKey: "AIzaSyArBeH0J-SSFRdhlWR-Jv00dFTHMWEhQ_o",
+  authDomain: "quickfix-c271f.firebaseapp.com",
+  projectId: "quickfix-c271f",
+  storageBucket: "quickfix-c271f.appspot.com",
+  messagingSenderId: "48532468752",
+  appId: "1:48532468752:web:bbeb5e1f81840680e2c695",
+  measurementId: "G-SQETC0BHZN"
+    ),
+  );
   runApp(const MyApp());
 }
 

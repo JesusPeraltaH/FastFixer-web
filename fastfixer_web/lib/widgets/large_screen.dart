@@ -1,3 +1,4 @@
+import 'package:fastfixer_web/screens/busqueda.dart';
 import 'package:flutter/material.dart';
 import 'package:fastfixer_web/screens/contratistas.dart';
 import 'package:fastfixer_web/screens/home.dart';
@@ -19,7 +20,7 @@ class _LargeScreenState extends State<LargeScreen> {
     setState(() {
       switch (page) {
         case 'Contratista 1':
-          _currentPage = SmallScreen();
+          _currentPage = SearchPage();
           break;
         case 'Contratista 2':
           _currentPage = Contratistas();
@@ -51,7 +52,7 @@ class _LargeScreenState extends State<LargeScreen> {
                     GestureDetector(
                       onTap: () => _navigateTo('Contratista 1'),
                       child: CustomText(
-                        text: "Contratista 1",
+                        text: "Busqueda",
                         size: 24,
                         color: Colors.black,
                         weight: FontWeight.normal,
@@ -60,7 +61,7 @@ class _LargeScreenState extends State<LargeScreen> {
                     GestureDetector(
                       onTap: () => _navigateTo('Contratista 2'),
                       child: CustomText(
-                        text: "Contratista 2",
+                        text: "Registro",
                         size: 24,
                         color: Colors.black,
                         weight: FontWeight.normal,
