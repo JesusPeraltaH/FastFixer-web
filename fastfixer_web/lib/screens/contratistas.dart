@@ -1,16 +1,3 @@
-/*import 'package:flutter/material.dart';
-
-class Contratistas extends StatelessWidget {
-  const Contratistas({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      constraints: BoxConstraints.expand(),
-      color: Colors.yellow,
-    );
-  }
-}*/
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -44,14 +31,16 @@ class _RegistrationFormState extends State<RegistrationForm> {
   final _formKey = GlobalKey<FormState>();
   String _nombre = '';
   String _apellidos = '';
-  String _especialidad = '';
+  String? _especialidad;
   String _direccion = '';
   String _telefono = '';
   String _correo = '';
   String _contrasena = '';
   String _tipo = 'Contratista';
-
   bool _obscureText = true;
+
+  // Lista de especialidades
+  final List<String> _especialidades = ['Electricista','Plomero','Llantero','Cerrajeria','Mantenimiento de celulares','Mantenimiento de techos'];
 
   Future<void> _submitForm() async {
     if (_formKey.currentState?.validate() ?? false) {
@@ -114,13 +103,25 @@ class _RegistrationFormState extends State<RegistrationForm> {
                   _apellidos = value ?? '';
                 },
               ),
-              TextFormField(
+              DropdownButtonFormField<String>(
                 decoration: InputDecoration(labelText: 'Especialidad'),
+                value: _especialidad,
+                items: _especialidades.map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Por favor ingrese la especialidad';
+                    return 'Por favor seleccione una especialidad';
                   }
                   return null;
+                },
+                onChanged: (value) {
+                  setState(() {
+                    _especialidad = value;
+                  });
                 },
                 onSaved: (value) {
                   _especialidad = value ?? '';
