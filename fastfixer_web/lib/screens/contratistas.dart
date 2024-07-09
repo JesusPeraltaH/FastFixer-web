@@ -13,11 +13,10 @@ class Contratistas extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Formulario de Registro',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
       home: RegistrationForm(),
+      color: Colors.white,
     );
   }
 }
@@ -40,7 +39,14 @@ class _RegistrationFormState extends State<RegistrationForm> {
   bool _obscureText = true;
 
   // Lista de especialidades
-  final List<String> _especialidades = ['Electricista','Plomero','Llantero','Cerrajeria','Mantenimiento de celulares','Mantenimiento de techos'];
+  final List<String> _especialidades = [
+    'Electricista',
+    'Plomero',
+    'Llantero',
+    'Cerrajeria',
+    'Mantenimiento de celulares',
+    'Mantenimiento de techos'
+  ];
 
   Future<void> _submitForm() async {
     if (_formKey.currentState?.validate() ?? false) {
@@ -68,7 +74,9 @@ class _RegistrationFormState extends State<RegistrationForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Text('Formulario de Registro'),
       ),
       body: Padding(
@@ -79,7 +87,9 @@ class _RegistrationFormState extends State<RegistrationForm> {
             children: [
               TextFormField(
                 decoration: InputDecoration(labelText: 'Nombre'),
-                inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]'))],
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]'))
+                ],
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor ingrese el nombre';
@@ -92,7 +102,9 @@ class _RegistrationFormState extends State<RegistrationForm> {
               ),
               TextFormField(
                 decoration: InputDecoration(labelText: 'Apellidos'),
-                inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]'))],
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]'))
+                ],
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor ingrese los apellidos';

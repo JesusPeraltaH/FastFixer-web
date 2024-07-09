@@ -29,11 +29,16 @@ AppBar topNavigationBar(BuildContext context, GlobalKey<ScaffoldState> key) {
     title: Row(
       children: [
         Visibility(
-          child: CustomText(
-              text: "Dash",
-              size: 20,
-              weight: FontWeight.bold,
-              color: lightGrey),
+          child: GestureDetector(
+            onTap: () {
+              Navigator.pushNamed(context, '/');
+            },
+            child: CustomText(
+                text: "Dash",
+                size: 20,
+                weight: FontWeight.bold,
+                color: lightGrey),
+          ),
         ),
         Expanded(child: Container()),
         IconButton(

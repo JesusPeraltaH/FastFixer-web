@@ -10,7 +10,8 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   final TextEditingController _searchController = TextEditingController();
 
-  void _deleteRecord(String documentId, String nombre, String apellidos, String especialidad, String telefono) {
+  void _deleteRecord(String documentId, String nombre, String apellidos,
+      String especialidad, String telefono) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -37,7 +38,10 @@ class _SearchPageState extends State<SearchPage> {
             TextButton(
               child: Text('Eliminar'),
               onPressed: () {
-                FirebaseFirestore.instance.collection('usuarios').doc(documentId).delete();
+                FirebaseFirestore.instance
+                    .collection('usuarios')
+                    .doc(documentId)
+                    .delete();
                 Navigator.of(context).pop();
               },
             ),
@@ -51,7 +55,8 @@ class _SearchPageState extends State<SearchPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => EditUserPage(documentId: documentId, userData: userData),
+        builder: (context) =>
+            EditUserPage(documentId: documentId, userData: userData),
       ),
     );
   }
@@ -60,6 +65,7 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white10,
         title: Text('Buscar Registros'),
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(50.0),
@@ -86,11 +92,21 @@ class _SearchPageState extends State<SearchPage> {
             return Center(child: CircularProgressIndicator());
           }
 
-          final results = snapshot.data!.docs.where((DocumentSnapshot document) {
+          final results =
+              snapshot.data!.docs.where((DocumentSnapshot document) {
             String searchValue = _searchController.text.toLowerCase();
-            return  document['nombre'].toString().toLowerCase().contains(searchValue) ||
-                    document['apellidos'].toString().toLowerCase().contains(searchValue) ||
-                    document['especialidad'].toString().toLowerCase().contains(searchValue);
+            return document['nombre']
+                    .toString()
+                    .toLowerCase()
+                    .contains(searchValue) ||
+                document['apellidos']
+                    .toString()
+                    .toLowerCase()
+                    .contains(searchValue) ||
+                document['especialidad']
+                    .toString()
+                    .toLowerCase()
+                    .contains(searchValue);
           }).toList();
 
           return ListView.builder(
@@ -99,14 +115,16 @@ class _SearchPageState extends State<SearchPage> {
               final document = results[index];
               return ListTile(
                 title: Text('${document['nombre']} ${document['apellidos']}'),
-                subtitle: Text('${document['especialidad']} ${document['correo']} ${document['telefono']} ${document['direccion']}'),
+                subtitle: Text(
+                    '${document['especialidad']} ${document['correo']} ${document['telefono']} ${document['direccion']}'),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
                       icon: Icon(Icons.edit),
                       onPressed: () {
-                        _editRecord(document.id, document.data() as Map<String, dynamic>);
+                        _editRecord(document.id,
+                            document.data() as Map<String, dynamic>);
                       },
                     ),
                     IconButton(

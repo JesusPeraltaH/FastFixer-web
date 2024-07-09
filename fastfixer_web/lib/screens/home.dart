@@ -7,7 +7,8 @@ class Homepage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       constraints: BoxConstraints.expand(),
-      color: Colors.black,
+      color: Colors.white,
+      child: Text("Bienvenido"),
     );
   }
 }

@@ -12,9 +12,12 @@ class Servicios extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
           title: Text('Registro de Servicio'),
+          backgroundColor: Colors.white,
         ),
         body: ServiceForm(),
       ),
@@ -79,8 +82,8 @@ class _ServiceFormState extends State<ServiceForm> {
           SnackBar(content: Text('Servicio registrado exitosamente')));
     } else {
       // Mostrar un mensaje de error
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Por favor, complete todos los campos')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Por favor, complete todos los campos')));
     }
   }
 
@@ -103,8 +106,14 @@ class _ServiceFormState extends State<ServiceForm> {
                 }
               });
             },
-            items: ['Electricista','Plomero','Llantero','Cerrajeria','Mantenimiento de celulares','Mantenimiento de techos']
-                .map((String specialty) {
+            items: [
+              'Electricista',
+              'Plomero',
+              'Llantero',
+              'Cerrajeria',
+              'Mantenimiento de celulares',
+              'Mantenimiento de techos'
+            ].map((String specialty) {
               return DropdownMenuItem<String>(
                 value: specialty,
                 child: Text(specialty),
@@ -119,8 +128,8 @@ class _ServiceFormState extends State<ServiceForm> {
             onChanged: (String? newValue) {
               setState(() {
                 selectedContractor = newValue;
-                selectedContractorId = contractorsFromDatabase
-                    .firstWhere((contractor) => contractor['nombre'] == newValue)['id']!;
+                selectedContractorId = contractorsFromDatabase.firstWhere(
+                    (contractor) => contractor['nombre'] == newValue)['id']!;
               });
             },
             items: contractorsFromDatabase.map((contractor) {

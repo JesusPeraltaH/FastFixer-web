@@ -33,21 +33,21 @@ class SideMenu extends StatelessWidget {
           SizedBox(height: 40),
           Divider(color: lightGrey.withOpacity(0.1)),
           ListTile(
-            title: Text("Pantalla 1"),
+            title: Text("Busqueda"),
             onTap: () {
               Navigator.pushNamed(
                   context, '/pantalla1'); // Navega a la pantalla 1
             },
           ),
           ListTile(
-            title: Text("Pantalla 2"),
+            title: Text("Registro"),
             onTap: () {
               Navigator.pushNamed(
                   context, '/pantalla2'); // Navega a la pantalla 2
             },
           ),
           ListTile(
-            title: Text("Pantalla 3"),
+            title: Text("Servicios"),
             onTap: () {
               Navigator.pushNamed(
                   context, '/pantalla3'); // Navega a la pantalla 3

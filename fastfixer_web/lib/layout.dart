@@ -1,4 +1,6 @@
 import 'package:fastfixer_web/helpers/responsiveness.dart';
+import 'package:fastfixer_web/screens/busqueda.dart';
+import 'package:fastfixer_web/screens/home.dart';
 import 'package:fastfixer_web/widgets/large_screen.dart';
 import 'package:fastfixer_web/widgets/side_menu.dart';
 import 'package:fastfixer_web/widgets/small_screen.dart';
@@ -18,7 +20,7 @@ class SiteLayout extends StatelessWidget {
       ),
       body: ResponsiveWidget(
         largeScreen: LargeScreen(),
-        smallScreen: SmallScreen(),
+        smallScreen: SearchPage(),
         mediumScreen: LargeScreen(),
       ),
     );
