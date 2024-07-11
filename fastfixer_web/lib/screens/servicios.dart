@@ -32,7 +32,7 @@ class ServiceForm extends StatefulWidget {
 
 class _ServiceFormState extends State<ServiceForm> {
   String? selectedSpecialty;
-  String? selectedContractor;
+  String? selectedCompany;
   String selectedContractorId = '';
   String serviceName = '';
   String serviceDescription = '';
@@ -53,26 +53,26 @@ class _ServiceFormState extends State<ServiceForm> {
     querySnapshot.docs.forEach((doc) {
       contractorsList.add({
         'id': doc.id,
-        'nombre': doc['nombre'],
+        'nombre_empresa': doc['nombre_empresa'],
       });
     });
     setState(() {
       contractorsFromDatabase = contractorsList;
-      selectedContractor = null;
+      selectedCompany = null;
       selectedContractorId = '';
     });
   }
 
   Future<void> registerService() async {
     if (selectedSpecialty != null &&
-        selectedContractor != null &&
+        selectedCompany != null &&
         serviceName.isNotEmpty &&
         serviceDescription.isNotEmpty) {
       CollectionReference services =
           FirebaseFirestore.instance.collection('servicios');
       await services.add({
         'especialidad': selectedSpecialty,
-        'contratista': selectedContractor,
+        'contratista': selectedCompany,
         'id': selectedContractorId,
         'nombre_servicio': serviceName,
         'descripcion_servicio': serviceDescription,
@@ -121,21 +121,21 @@ class _ServiceFormState extends State<ServiceForm> {
             }).toList(),
           ),
           SizedBox(height: 16.0),
-          // Combo Box de Contratista
+          // Combo Box de Empresa
           DropdownButton<String>(
-            hint: Text('Seleccione un contratista'),
-            value: selectedContractor,
+            hint: Text('Seleccione una empresa'),
+            value: selectedCompany,
             onChanged: (String? newValue) {
               setState(() {
-                selectedContractor = newValue;
+                selectedCompany = newValue;
                 selectedContractorId = contractorsFromDatabase.firstWhere(
-                    (contractor) => contractor['nombre'] == newValue)['id']!;
+                    (contractor) => contractor['nombre_empresa'] == newValue)['id']!;
               });
             },
             items: contractorsFromDatabase.map((contractor) {
               return DropdownMenuItem<String>(
-                value: contractor['nombre'],
-                child: Text(contractor['nombre']!),
+                value: contractor['nombre_empresa'],
+                child: Text(contractor['nombre_empresa']!),
               );
             }).toList(),
           ),

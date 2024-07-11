@@ -11,7 +11,7 @@ class _SearchPageState extends State<SearchPage> {
   final TextEditingController _searchController = TextEditingController();
 
   void _deleteRecord(String documentId, String nombre, String apellidos,
-      String especialidad, String telefono) {
+      String especialidad, String telefono, String nombreEmpresa) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -22,9 +22,11 @@ class _SearchPageState extends State<SearchPage> {
               children: <Widget>[
                 Text('¿Seguro que desea eliminar este registro?'),
                 SizedBox(height: 10),
-                Text('$nombre' ' $apellidos'),
+                Text('$nombre $apellidos'),
                 Text('$especialidad'),
                 Text('$telefono'),
+                SizedBox(height: 10), // Espaciado adicional
+                Text('Empresa: $nombreEmpresa'),
               ],
             ),
           ),
@@ -74,7 +76,7 @@ class _SearchPageState extends State<SearchPage> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: 'Buscar por nombre, apellidos o especialidad',
+                hintText: 'Buscar por nombre, apellidos, especialidad o empresa',
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.search),
               ),
@@ -106,6 +108,10 @@ class _SearchPageState extends State<SearchPage> {
                 document['especialidad']
                     .toString()
                     .toLowerCase()
+                    .contains(searchValue) ||
+                document['nombre_empresa']
+                    .toString()
+                    .toLowerCase()
                     .contains(searchValue);
           }).toList();
 
@@ -116,7 +122,8 @@ class _SearchPageState extends State<SearchPage> {
               return ListTile(
                 title: Text('${document['nombre']} ${document['apellidos']}'),
                 subtitle: Text(
-                    '${document['especialidad']} ${document['correo']} ${document['telefono']} ${document['direccion']}'),
+                  '${document['especialidad']}, ${document['correo']}, ${document['telefono']}, ${document['direccion']}\n\nEmpresa: ${document['nombre_empresa']}',
+                ),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -136,6 +143,7 @@ class _SearchPageState extends State<SearchPage> {
                           document['apellidos'],
                           document['especialidad'],
                           document['telefono'],
+                          document['nombre_empresa'],
                         );
                       },
                     ),
@@ -150,13 +158,15 @@ class _SearchPageState extends State<SearchPage> {
                         content: SingleChildScrollView(
                           child: ListBody(
                             children: [
-                              Text('Nombre: ${document['nombre']}'),
-                              Text('Apellidos: ${document['apellidos']}'),
+                              Text(
+                                  'Nombre: ${document['nombre']} ${document['apellidos']}'),
                               Text('Especialidad: ${document['especialidad']}'),
                               Text('Dirección: ${document['direccion']}'),
                               Text('Teléfono: ${document['telefono']}'),
                               Text('Correo: ${document['correo']}'),
                               Text('Tipo: ${document['tipo']}'),
+                              SizedBox(height: 10), // Espaciado adicional
+                              Text('Empresa: ${document['nombre_empresa']}'),
                             ],
                           ),
                         ),

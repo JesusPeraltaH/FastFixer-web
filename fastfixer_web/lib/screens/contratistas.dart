@@ -28,6 +28,7 @@ class RegistrationForm extends StatefulWidget {
 
 class _RegistrationFormState extends State<RegistrationForm> {
   final _formKey = GlobalKey<FormState>();
+  String _nempresa = '';
   String _nombre = '';
   String _apellidos = '';
   String? _especialidad;
@@ -54,6 +55,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
 
       // Envía los datos a Firestore
       await FirebaseFirestore.instance.collection('usuarios').add({
+        'nombre_empresa': _nempresa,
         'nombre': _nombre,
         'apellidos': _apellidos,
         'especialidad': _especialidad,
@@ -85,6 +87,21 @@ class _RegistrationFormState extends State<RegistrationForm> {
           key: _formKey,
           child: ListView(
             children: [
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Nombre de la Empresa'),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]'))
+                ],
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor ingrese el nombre';
+                  }
+                  return null;
+                },
+                onSaved: (value) {
+                  _nempresa = value ?? '';
+                },
+              ),
               TextFormField(
                 decoration: InputDecoration(labelText: 'Nombre'),
                 inputFormatters: [
