@@ -1,3 +1,4 @@
+import 'package:fastfixer_web/screens/bservicios.dart';
 import 'package:fastfixer_web/screens/busqueda.dart';
 import 'package:fastfixer_web/screens/servicios.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +30,9 @@ class _LargeScreenState extends State<LargeScreen> {
         case 'Contratista 3':
           _currentPage = Servicios();
           break;
+        case 'Contratista 4':
+          _currentPage = SearchPageSer();
+          break;
         default:
           _currentPage =
               Homepage(); // Página por defecto si no se encuentra ninguna coincidencia
@@ -53,7 +57,7 @@ class _LargeScreenState extends State<LargeScreen> {
                     GestureDetector(
                       onTap: () => _navigateTo('Contratista 1'),
                       child: CustomText(
-                        text: "Busqueda",
+                        text: "Buscar Contratistas",
                         size: 24,
                         color: Colors.black,
                         weight: FontWeight.normal,
@@ -62,7 +66,7 @@ class _LargeScreenState extends State<LargeScreen> {
                     GestureDetector(
                       onTap: () => _navigateTo('Contratista 2'),
                       child: CustomText(
-                        text: "Registro",
+                        text: "Registrar C",
                         size: 24,
                         color: Colors.black,
                         weight: FontWeight.normal,
@@ -71,7 +75,16 @@ class _LargeScreenState extends State<LargeScreen> {
                     GestureDetector(
                       onTap: () => _navigateTo('Contratista 3'),
                       child: CustomText(
-                        text: "Servicios",
+                        text: "Registrar Servicios",
+                        size: 24,
+                        color: Colors.black,
+                        weight: FontWeight.normal,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () => _navigateTo('Contratista 4'),
+                      child: CustomText(
+                        text: "Buscar Servicios",
                         size: 24,
                         color: Colors.black,
                         weight: FontWeight.normal,

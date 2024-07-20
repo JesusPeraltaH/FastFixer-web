@@ -90,30 +90,25 @@ class _SearchPageState extends State<SearchPage> {
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('usuarios').snapshots(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           }
 
-          final results =
-              snapshot.data!.docs.where((DocumentSnapshot document) {
+          if (!snapshot.hasData || snapshot.data == null) {
+            return Center(child: Text('No hay datos disponibles.'));
+          }
+
+          final results = snapshot.data!.docs.where((DocumentSnapshot document) {
             String searchValue = _searchController.text.toLowerCase();
-            return document['nombre']
-                    .toString()
-                    .toLowerCase()
-                    .contains(searchValue) ||
-                document['apellidos']
-                    .toString()
-                    .toLowerCase()
-                    .contains(searchValue) ||
-                document['especialidad']
-                    .toString()
-                    .toLowerCase()
-                    .contains(searchValue) ||
-                document['nombre_empresa']
-                    .toString()
-                    .toLowerCase()
-                    .contains(searchValue);
+            return (document['nombre']?.toString()?.toLowerCase()?.contains(searchValue) ?? false) ||
+                    (document['apellidos']?.toString()?.toLowerCase()?.contains(searchValue) ?? false) ||
+                    (document['especialidad']?.toString()?.toLowerCase()?.contains(searchValue) ?? false) ||
+                    (document['nombre_empresa']?.toString()?.toLowerCase()?.contains(searchValue) ?? false);
           }).toList();
+
+          if (results.isEmpty) {
+            return Center(child: Text('No se encontraron resultados.'));
+          }
 
           return ListView.builder(
             itemCount: results.length,
@@ -130,8 +125,7 @@ class _SearchPageState extends State<SearchPage> {
                     IconButton(
                       icon: Icon(Icons.edit),
                       onPressed: () {
-                        _editRecord(document.id,
-                            document.data() as Map<String, dynamic>);
+                        _editRecord(document.id, document.data() as Map<String, dynamic>);
                       },
                     ),
                     IconButton(
@@ -158,8 +152,7 @@ class _SearchPageState extends State<SearchPage> {
                         content: SingleChildScrollView(
                           child: ListBody(
                             children: [
-                              Text(
-                                  'Nombre: ${document['nombre']} ${document['apellidos']}'),
+                              Text('Nombre: ${document['nombre']} ${document['apellidos']}'),
                               Text('Especialidad: ${document['especialidad']}'),
                               Text('Dirección: ${document['direccion']}'),
                               Text('Teléfono: ${document['telefono']}'),
