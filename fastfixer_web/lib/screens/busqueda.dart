@@ -72,113 +72,136 @@ class _SearchPageState extends State<SearchPage> {
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(50.0),
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: 'Buscar por nombre, apellidos, especialidad o empresa',
+                hintText:
+                    'Buscar por nombre, apellidos, especialidad o empresa',
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.search),
               ),
               onChanged: (value) {
-                setState(() {});
+                setState(() {}); // Actualiza la búsqueda en tiempo real
               },
             ),
           ),
         ),
       ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('usuarios').snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          }
+      body: Center(
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: StreamBuilder<QuerySnapshot>(
+            stream:
+                FirebaseFirestore.instance.collection('usuarios').snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              }
 
-          if (!snapshot.hasData || snapshot.data == null) {
-            return Center(child: Text('No hay datos disponibles.'));
-          }
+              if (!snapshot.hasData || snapshot.data == null) {
+                return Center(child: Text('No hay datos disponibles.'));
+              }
 
-          final results = snapshot.data!.docs.where((DocumentSnapshot document) {
-            String searchValue = _searchController.text.toLowerCase();
-            return (document['nombre']?.toString()?.toLowerCase()?.contains(searchValue) ?? false) ||
-                    (document['apellidos']?.toString()?.toLowerCase()?.contains(searchValue) ?? false) ||
-                    (document['especialidad']?.toString()?.toLowerCase()?.contains(searchValue) ?? false) ||
-                    (document['nombre_empresa']?.toString()?.toLowerCase()?.contains(searchValue) ?? false);
-          }).toList();
+              // Filtrar los resultados basados en el texto de búsqueda
+              final results =
+                  snapshot.data!.docs.where((DocumentSnapshot document) {
+                final data = document.data() as Map<String, dynamic>;
+                String searchValue = _searchController.text.toLowerCase();
+                return (data['nombre']
+                            ?.toString()
+                            ?.toLowerCase()
+                            ?.contains(searchValue) ??
+                        false) ||
+                    (data['apellidos']
+                            ?.toString()
+                            ?.toLowerCase()
+                            ?.contains(searchValue) ??
+                        false) ||
+                    (data['especialidad']
+                            ?.toString()
+                            ?.toLowerCase()
+                            ?.contains(searchValue) ??
+                        false) ||
+                    (data['nombre_empresa']
+                            ?.toString()
+                            ?.toLowerCase()
+                            ?.contains(searchValue) ??
+                        false);
+              }).toList();
 
-          if (results.isEmpty) {
-            return Center(child: Text('No se encontraron resultados.'));
-          }
+              if (results.isEmpty) {
+                return Center(child: Text('No se encontraron resultados.'));
+              }
 
-          return ListView.builder(
-            itemCount: results.length,
-            itemBuilder: (context, index) {
-              final document = results[index];
-              return ListTile(
-                title: Text('${document['nombre']} ${document['apellidos']}'),
-                subtitle: Text(
-                  '${document['especialidad']}, ${document['correo']}, ${document['telefono']}, ${document['direccion']}\n\nEmpresa: ${document['nombre_empresa']}',
-                ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.edit),
-                      onPressed: () {
-                        _editRecord(document.id, document.data() as Map<String, dynamic>);
-                      },
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.delete),
-                      onPressed: () {
-                        _deleteRecord(
-                          document.id,
-                          document['nombre'],
-                          document['apellidos'],
-                          document['especialidad'],
-                          document['telefono'],
-                          document['nombre_empresa'],
+              return Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        top: 10.0), // Reducido a 10 píxeles
+                    child: DataTable(
+                      headingRowColor:
+                          MaterialStateProperty.all<Color>(Colors.grey[800]!),
+                      headingTextStyle: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                      columns: const [
+                        DataColumn(label: Text('Nombre')),
+                        DataColumn(label: Text('Especialidad')),
+                        DataColumn(label: Text('Teléfono')),
+                        DataColumn(label: Text('Empresa')),
+                        DataColumn(label: Text('Acciones')),
+                      ],
+                      rows: results.map((document) {
+                        final data = document.data() as Map<String, dynamic>;
+                        return DataRow(
+                          cells: [
+                            DataCell(
+                                Text('${data['nombre']} ${data['apellidos']}')),
+                            DataCell(Text('${data['especialidad']}')),
+                            DataCell(Text('${data['telefono']}')),
+                            DataCell(Text('${data['nombre_empresa']}')),
+                            DataCell(
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    icon: Icon(Icons.edit),
+                                    onPressed: () {
+                                      _editRecord(
+                                        document.id,
+                                        data,
+                                      );
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.delete),
+                                    onPressed: () {
+                                      _deleteRecord(
+                                        document.id,
+                                        data['nombre'],
+                                        data['apellidos'],
+                                        data['especialidad'],
+                                        data['telefono'],
+                                        data['nombre_empresa'],
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         );
-                      },
+                      }).toList(),
                     ),
-                  ],
-                ),
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: Text('Detalles del Registro'),
-                        content: SingleChildScrollView(
-                          child: ListBody(
-                            children: [
-                              Text('Nombre: ${document['nombre']} ${document['apellidos']}'),
-                              Text('Especialidad: ${document['especialidad']}'),
-                              Text('Dirección: ${document['direccion']}'),
-                              Text('Teléfono: ${document['telefono']}'),
-                              Text('Correo: ${document['correo']}'),
-                              Text('Tipo: ${document['tipo']}'),
-                              SizedBox(height: 10), // Espaciado adicional
-                              Text('Empresa: ${document['nombre_empresa']}'),
-                            ],
-                          ),
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: Text('Cerrar'),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
+                  ),
+                ],
               );
             },
-          );
-        },
+          ),
+        ),
       ),
     );
   }

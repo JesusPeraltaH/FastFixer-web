@@ -7,16 +7,17 @@ import 'package:flutter/services.dart';
 AppBar topNavigationBar(BuildContext context, GlobalKey<ScaffoldState> key) {
   return AppBar(
     leading: !ResponsiveWidget.isSmallSize(context)
-        ? Row(
-            children: [
-              Container(
-                padding: EdgeInsets.only(left: 14),
-                child: Image.asset(
-                  "assets/icons/logo.png",
-                  width: 28,
-                ),
-              )
-            ],
+        ? Padding(
+            padding: EdgeInsets.only(left: 14),
+            child: CircleAvatar(
+              radius: 40,
+              backgroundColor: Color(0xFF424242),
+              child: Image.asset(
+                "assets/icons/logo.png",
+                height: 40, // Tamaño ajustado
+                width: 40, // Tamaño ajustado
+              ),
+            ),
           )
         : IconButton(
             onPressed: () {
@@ -34,10 +35,10 @@ AppBar topNavigationBar(BuildContext context, GlobalKey<ScaffoldState> key) {
               Navigator.pushNamed(context, '/');
             },
             child: CustomText(
-                text: "Dash",
+                text: "Fast Fixer Dash",
                 size: 20,
                 weight: FontWeight.bold,
-                color: lightGrey),
+                color: Colors.white),
           ),
         ),
         Expanded(child: Container()),
@@ -45,7 +46,7 @@ AppBar topNavigationBar(BuildContext context, GlobalKey<ScaffoldState> key) {
             onPressed: () {},
             icon: Icon(
               Icons.settings,
-              color: dark.withOpacity(0.7),
+              color: Colors.white,
             )),
         Stack(
           children: [
@@ -53,7 +54,7 @@ AppBar topNavigationBar(BuildContext context, GlobalKey<ScaffoldState> key) {
                 onPressed: () {},
                 icon: Icon(
                   Icons.notifications,
-                  color: dark.withOpacity(0.7),
+                  color: Colors.white,
                 )),
             Positioned(
                 top: 7,
@@ -69,30 +70,20 @@ AppBar topNavigationBar(BuildContext context, GlobalKey<ScaffoldState> key) {
                 ))
           ],
         ),
-        Container(
-          width: 1,
-          height: 22,
-          color: lightGrey,
-        ),
-        SizedBox(
-          width: 24,
-        ),
+        SizedBox(width: 24),
         CustomText(
             text: "Jesus",
             size: 18,
             weight: FontWeight.normal,
-            color: lightGrey),
-        SizedBox(
-          width: 16,
-        ),
+            color: Colors.white),
+        SizedBox(width: 16),
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(30),
           ),
-          child: Container(
+          child: Padding(
             padding: EdgeInsets.all(2),
-            margin: EdgeInsets.all(2),
             child: CircleAvatar(
               backgroundColor: light,
               child: Icon(
@@ -105,6 +96,6 @@ AppBar topNavigationBar(BuildContext context, GlobalKey<ScaffoldState> key) {
       ],
     ),
     iconTheme: IconThemeData(color: dark),
-    backgroundColor: Colors.transparent,
+    backgroundColor: Color(0xFFFA9F16),
   );
 }
