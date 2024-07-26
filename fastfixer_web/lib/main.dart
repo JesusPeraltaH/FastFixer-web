@@ -4,6 +4,7 @@ import 'package:fastfixer_web/layout.dart';
 import 'package:fastfixer_web/screens/busqueda.dart';
 import 'package:fastfixer_web/screens/contratistas.dart';
 import 'package:fastfixer_web/screens/home.dart';
+import 'package:fastfixer_web/screens/log.dart';
 import 'package:fastfixer_web/screens/servicios.dart';
 import 'package:fastfixer_web/widgets/small_screen.dart';
 import 'package:flutter/material.dart';
@@ -31,8 +32,8 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   static final Map<String, WidgetBuilder> routes = {
-    '/': (context) =>
-        SiteLayout(), // Ruta por defecto: SiteLayout como página principal
+    '/': (context) =>LoginScreen(), // Ruta por defecto: SiteLayout como página principal
+    '/pantalla': (context) => SiteLayout(),
     '/pantalla1': (context) => SearchPage(),
     '/pantalla2': (context) => Contratistas(),
     '/pantalla3': (context) => Servicios(),
