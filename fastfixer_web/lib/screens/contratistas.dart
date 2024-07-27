@@ -1,7 +1,14 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/services.dart'; // Importa este paquete para inputFormatters
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/services.dart';
+import 'package:uuid/uuid.dart';
+import 'dart:typed_data'; // Importa para manejar Uint8List
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,6 +45,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
   String _contrasena = '';
   String _tipo = 'Contratista';
   bool _obscureText = true;
+  List<PlatformFile>? _images = [];
 
   // Lista de especialidades
   final List<String> _especialidades = [
@@ -49,9 +57,85 @@ class _RegistrationFormState extends State<RegistrationForm> {
     'Mantenimiento de techos'
   ];
 
+  Future<void> _pickImages() async {
+    final result = await FilePicker.platform.pickFiles(
+      allowMultiple: true,
+      type: FileType.image,
+    );
+
+    if (result != null && result.files.isNotEmpty) {
+      setState(() {
+        _images = result.files;
+      });
+    }
+  }
+
+  Widget _buildImagePreviews() {
+    if (_images == null || _images!.isEmpty) {
+      return Center(child: Text('No se han seleccionado imágenes.'));
+    }
+
+    return GridView.builder(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        crossAxisSpacing: 8.0,
+        mainAxisSpacing: 8.0,
+      ),
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      itemCount: _images!.length,
+      itemBuilder: (context, index) {
+        final file = _images![index];
+        return Image.memory(
+          file.bytes!,
+          fit: BoxFit.cover,
+        );
+      },
+    );
+  }
+
+  Future<String> uploadFile(PlatformFile file) async {
+    try {
+      var storageReference = FirebaseStorage.instance
+          .ref()
+          .child('product_images')
+          .child(Uuid().v4());
+
+      final metadata = SettableMetadata(
+        contentType:
+            file.extension != null ? 'image/${file.extension}' : 'image/jpeg',
+        customMetadata: {'picked-file-path': file.name},
+      );
+
+      if (kIsWeb) {
+        final bytes = file.bytes;
+        if (bytes == null) {
+          throw Exception("No bytes available for the file.");
+        }
+        await storageReference.putData(Uint8List.fromList(bytes), metadata);
+      } else {
+        await storageReference.putFile(File(file.path!), metadata);
+      }
+
+      return await storageReference.getDownloadURL();
+    } catch (e) {
+      print("Error uploading file: $e");
+      throw e;
+    }
+  }
+
   Future<void> _submitForm() async {
     if (_formKey.currentState?.validate() ?? false) {
       _formKey.currentState?.save();
+
+      // Sube las imágenes a Firebase Storage
+      List<String> imageUrls = [];
+      if (_images != null) {
+        for (var file in _images!) {
+          String url = await uploadFile(file);
+          imageUrls.add(url);
+        }
+      }
 
       // Envía los datos a Firestore
       await FirebaseFirestore.instance.collection('usuarios').add({
@@ -64,6 +148,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
         'correo': _correo,
         'contrasena': _contrasena,
         'tipo': _tipo,
+        'imagenes': imageUrls,
       });
 
       // Muestra un mensaje de éxito
@@ -228,6 +313,13 @@ class _RegistrationFormState extends State<RegistrationForm> {
                 decoration: InputDecoration(labelText: 'Tipo'),
                 readOnly: true,
               ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _pickImages,
+                child: Text('Seleccionar imágenes'),
+              ),
+              SizedBox(height: 20),
+              _buildImagePreviews(),
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _submitForm,
