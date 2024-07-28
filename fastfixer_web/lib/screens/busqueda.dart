@@ -1,4 +1,5 @@
 import 'package:fastfixer_web/screens/modificar.dart';
+import 'package:fastfixer_web/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -89,119 +90,148 @@ class _SearchPageState extends State<SearchPage> {
           ),
         ),
       ),
-      body: Center(
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: StreamBuilder<QuerySnapshot>(
-            stream:
-                FirebaseFirestore.instance.collection('usuarios').snapshots(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
-              }
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance.collection('usuarios').snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
 
-              if (!snapshot.hasData || snapshot.data == null) {
-                return Center(child: Text('No hay datos disponibles.'));
-              }
+          if (!snapshot.hasData || snapshot.data == null) {
+            return Center(child: Text('No hay datos disponibles.'));
+          }
 
-              // Filtrar los resultados basados en el texto de búsqueda
-              final results =
-                  snapshot.data!.docs.where((DocumentSnapshot document) {
-                final data = document.data() as Map<String, dynamic>;
-                String searchValue = _searchController.text.toLowerCase();
-                return (data['nombre']
-                            ?.toString()
-                            ?.toLowerCase()
-                            ?.contains(searchValue) ??
-                        false) ||
-                    (data['apellidos']
-                            ?.toString()
-                            ?.toLowerCase()
-                            ?.contains(searchValue) ??
-                        false) ||
-                    (data['especialidad']
-                            ?.toString()
-                            ?.toLowerCase()
-                            ?.contains(searchValue) ??
-                        false) ||
-                    (data['nombre_empresa']
-                            ?.toString()
-                            ?.toLowerCase()
-                            ?.contains(searchValue) ??
-                        false);
-              }).toList();
+          // Filtrar los resultados basados en el texto de búsqueda
+          final results =
+              snapshot.data!.docs.where((DocumentSnapshot document) {
+            final data = document.data() as Map<String, dynamic>;
+            String searchValue = _searchController.text.toLowerCase();
+            return (data['nombre']
+                        ?.toString()
+                        ?.toLowerCase()
+                        ?.contains(searchValue) ??
+                    false) ||
+                (data['apellidos']
+                        ?.toString()
+                        ?.toLowerCase()
+                        ?.contains(searchValue) ??
+                    false) ||
+                (data['especialidad']
+                        ?.toString()
+                        ?.toLowerCase()
+                        ?.contains(searchValue) ??
+                    false) ||
+                (data['nombre_empresa']
+                        ?.toString()
+                        ?.toLowerCase()
+                        ?.contains(searchValue) ??
+                    false);
+          }).toList();
 
-              if (results.isEmpty) {
-                return Center(child: Text('No se encontraron resultados.'));
-              }
+          if (results.isEmpty) {
+            return Center(child: Text('No se encontraron resultados.'));
+          }
 
-              return Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 10.0), // Reducido a 10 píxeles
-                    child: DataTable(
-                      headingRowColor:
-                          MaterialStateProperty.all<Color>(Colors.grey[800]!),
-                      headingTextStyle: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                      columns: const [
-                        DataColumn(label: Text('Nombre')),
-                        DataColumn(label: Text('Especialidad')),
-                        DataColumn(label: Text('Teléfono')),
-                        DataColumn(label: Text('Empresa')),
-                        DataColumn(label: Text('Acciones')),
-                      ],
-                      rows: results.map((document) {
-                        final data = document.data() as Map<String, dynamic>;
-                        return DataRow(
-                          cells: [
-                            DataCell(
-                                Text('${data['nombre']} ${data['apellidos']}')),
-                            DataCell(Text('${data['especialidad']}')),
-                            DataCell(Text('${data['telefono']}')),
-                            DataCell(Text('${data['nombre_empresa']}')),
-                            DataCell(
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                    icon: Icon(Icons.edit),
-                                    onPressed: () {
-                                      _editRecord(
-                                        document.id,
-                                        data,
-                                      );
-                                    },
-                                  ),
-                                  IconButton(
-                                    icon: Icon(Icons.delete),
-                                    onPressed: () {
-                                      _deleteRecord(
-                                        document.id,
-                                        data['nombre'],
-                                        data['apellidos'],
-                                        data['especialidad'],
-                                        data['telefono'],
-                                        data['nombre_empresa'],
-                                      );
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        );
-                      }).toList(),
-                    ),
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 50.0),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.8 -
+                    50, // 4/5 de la pantalla menos el padding
+                child: DataTable(
+                  headingRowColor:
+                      MaterialStateProperty.all<Color>(Colors.black),
+                  headingTextStyle: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
-                ],
-              );
-            },
-          ),
-        ),
+                  columns: const [
+                    DataColumn(label: Text('Perfil')),
+                    DataColumn(label: Text('Nombre')),
+                    DataColumn(label: Text('Especialidad')),
+                    DataColumn(label: Text('Teléfono')),
+                    DataColumn(label: Text('Empresa')),
+                    DataColumn(label: Text('Acciones')),
+                  ],
+                  rows: results.map((document) {
+                    final data = document.data() as Map<String, dynamic>;
+                    final imageUrl = data['perfil_avatar'];
+
+                    return DataRow(
+                      cells: [
+                        DataCell(
+                          CircleAvatar(
+                            radius: 20,
+                            backgroundColor: tSecondaryColor,
+                            backgroundImage:
+                                imageUrl != null && imageUrl.isNotEmpty
+                                    ? NetworkImage(imageUrl)
+                                    : null,
+                            child: imageUrl == null || imageUrl.isEmpty
+                                ? Icon(
+                                    Icons.person,
+                                    size: 20,
+                                    color: Colors.black,
+                                  )
+                                : null,
+                          ),
+                        ),
+                        DataCell(
+                            Text('${data['nombre']} ${data['apellidos']}')),
+                        DataCell(Text('${data['especialidad']}')),
+                        DataCell(Text('${data['telefono']}')),
+                        DataCell(Text('${data['nombre_empresa']}')),
+                        DataCell(
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: Icon(Icons.edit),
+                                onPressed: () {
+                                  _editRecord(
+                                    document.id,
+                                    data,
+                                  );
+                                },
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.delete),
+                                onPressed: () {
+                                  _deleteRecord(
+                                    document.id,
+                                    data['nombre'],
+                                    data['apellidos'],
+                                    data['especialidad'],
+                                    data['telefono'],
+                                    data['nombre_empresa'],
+                                  );
+                                },
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.file_copy_outlined),
+                                onPressed: () {
+                                  _deleteRecord(
+                                    document.id,
+                                    data['nombre'],
+                                    data['apellidos'],
+                                    data['especialidad'],
+                                    data['telefono'],
+                                    data['nombre_empresa'],
+                                  );
+                                },
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }

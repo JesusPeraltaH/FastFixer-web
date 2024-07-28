@@ -13,7 +13,6 @@ class _SearchPageSer extends State<SearchPageSer> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white10,
         title: Text('Buscar Servicios'),
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(50.0),
@@ -34,9 +33,7 @@ class _SearchPageSer extends State<SearchPageSer> {
         ),
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('servicios')
-            .snapshots(),
+        stream: FirebaseFirestore.instance.collection('servicios').snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return Center(
@@ -46,22 +43,39 @@ class _SearchPageSer extends State<SearchPageSer> {
 
           var services = snapshot.data!.docs.where((doc) {
             var searchTerm = _searchController.text.toLowerCase();
-            return doc['nombre_servicio'].toString().toLowerCase().contains(searchTerm) ||
-                    doc['especialidad'].toString().toLowerCase().contains(searchTerm) ||
-                    doc['contratista'].toString().toLowerCase().contains(searchTerm);
+            return doc['nombre_servicio']
+                    .toString()
+                    .toLowerCase()
+                    .contains(searchTerm) ||
+                doc['especialidad']
+                    .toString()
+                    .toLowerCase()
+                    .contains(searchTerm) ||
+                doc['empresa'].toString().toLowerCase().contains(searchTerm);
           }).toList();
 
-          return ListView.builder(
-            itemCount: services.length,
-            itemBuilder: (context, index) {
-              var service = services[index];
-
-              return ListTile(
-                title: Text(service['nombre_servicio']),
-                subtitle: Text(service['descripcion_servicio']),
-                trailing: Text(service['especialidad']),
-              );
-            },
+          return Padding(
+            padding: const EdgeInsets.all(2.0),
+            child: DataTable(
+              headingRowColor: MaterialStateProperty.all<Color>(Colors.black),
+              headingTextStyle: TextStyle(
+                color: Colors.white,
+              ),
+              columns: [
+                DataColumn(label: Text('Empresa')),
+                DataColumn(label: Text('Especialidad')),
+                DataColumn(label: Text('Servicio')),
+                DataColumn(label: Text('Descripción')),
+              ],
+              rows: services.map((service) {
+                return DataRow(cells: [
+                  DataCell(Text(service['empresa'])),
+                  DataCell(Text(service['especialidad'])),
+                  DataCell(Text(service['nombre_servicio'])),
+                  DataCell(Text(service['descripcion_servicio'])),
+                ]);
+              }).toList(),
+            ),
           );
         },
       ),
