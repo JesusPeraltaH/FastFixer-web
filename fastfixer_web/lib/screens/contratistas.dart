@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -8,7 +7,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
-import 'dart:typed_data'; // Importa para manejar Uint8List
+import 'dart:typed_data';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,8 +45,8 @@ class _RegistrationFormState extends State<RegistrationForm> {
   String _tipo = 'Contratista';
   bool _obscureText = true;
   List<PlatformFile>? _images = [];
+  PlatformFile? _profileImage;
 
-  // Lista de especialidades
   final List<String> _especialidades = [
     'Electricista',
     'Plomero',
@@ -66,6 +65,18 @@ class _RegistrationFormState extends State<RegistrationForm> {
     if (result != null && result.files.isNotEmpty) {
       setState(() {
         _images = result.files;
+      });
+    }
+  }
+
+  Future<void> _pickProfileImage() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+    );
+
+    if (result != null && result.files.isNotEmpty) {
+      setState(() {
+        _profileImage = result.files.first;
       });
     }
   }
@@ -91,6 +102,21 @@ class _RegistrationFormState extends State<RegistrationForm> {
           fit: BoxFit.cover,
         );
       },
+    );
+  }
+
+  Widget _buildProfileImagePreview() {
+    if (_profileImage == null) {
+      return CircleAvatar(
+        radius: 50,
+        backgroundColor: Colors.grey[200],
+        child: Icon(Icons.person, size: 50, color: Colors.grey),
+      );
+    }
+
+    return CircleAvatar(
+      radius: 50,
+      backgroundImage: MemoryImage(_profileImage!.bytes!),
     );
   }
 
@@ -137,6 +163,12 @@ class _RegistrationFormState extends State<RegistrationForm> {
         }
       }
 
+      // Sube la imagen de perfil a Firebase Storage
+      String? profileImageUrl;
+      if (_profileImage != null) {
+        profileImageUrl = await uploadFile(_profileImage!);
+      }
+
       // Envía los datos a Firestore
       await FirebaseFirestore.instance.collection('usuarios').add({
         'nombre_empresa': _nempresa,
@@ -149,6 +181,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
         'contrasena': _contrasena,
         'tipo': _tipo,
         'imagenes': imageUrls,
+        'perfil_avatar': profileImageUrl,
       });
 
       // Muestra un mensaje de éxito
@@ -172,6 +205,17 @@ class _RegistrationFormState extends State<RegistrationForm> {
           key: _formKey,
           child: ListView(
             children: [
+              Center(
+                child: Column(
+                  children: [
+                    _buildProfileImagePreview(),
+                    TextButton(
+                      onPressed: _pickProfileImage,
+                      child: Text('Seleccionar imagen de perfil'),
+                    ),
+                  ],
+                ),
+              ),
               TextFormField(
                 decoration: InputDecoration(labelText: 'Nombre de la Empresa'),
                 inputFormatters: [
