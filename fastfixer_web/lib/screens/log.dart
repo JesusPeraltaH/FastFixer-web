@@ -30,9 +30,15 @@ class _LoginScreenState extends State<LoginScreen> {
       } else {
         // Credenciales inválidas
         print('Invalid credentials');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Invalid credentials'),
+        ));
       }
     } catch (e) {
       print(e);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Error: ${e.toString()}'),
+      ));
     }
   }
 

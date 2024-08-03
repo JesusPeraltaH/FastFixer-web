@@ -1,0 +1,37 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "fastfixer_web",
+            "cwd": "fastfixer_web",
+            "request": "launch",
+            "type": "dart",
+            "args": [
+                "--web-port=5000",
+                "--web-renderer=html"  // Usar el renderer HTML para Chrome
+            ]
+        },
+        {
+            "name": "fastfixer_web (profile mode)",
+            "cwd": "fastfixer_web",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile",
+            "args": [
+                "--web-port=5000",
+                "--web-renderer=html"  // Usar el renderer HTML para Chrome en modo perfil
+            ]
+        },
+        {
+            "name": "fastfixer_web (release mode)",
+            "cwd": "fastfixer_web",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release",
+            "args": [
+                "--web-port=5000",
+                "--web-renderer=html"  // Usar el renderer HTML para Chrome en modo release
+            ]
+        }
+    ]
+}
