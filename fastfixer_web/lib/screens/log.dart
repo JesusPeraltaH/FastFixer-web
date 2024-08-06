@@ -1,3 +1,4 @@
+import 'package:fastfixer_web/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -37,6 +38,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final txtTheme = Theme.of(context).textTheme;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Padding(
@@ -50,6 +53,18 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
+                  CircleAvatar(
+                    radius: 50,
+                    backgroundColor: tDarkColor,
+                    child: Image.asset(
+                      "/icons/logo.png",
+                      width: 80,
+                      height: 80,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
                   Text(
                     'Login',
                     textAlign: TextAlign.center,
@@ -58,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 48.0),
+                  SizedBox(height: 38.0),
                   TextField(
                     textAlign: TextAlign.center,
                     onChanged: (value) {
@@ -66,17 +81,19 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                     decoration: InputDecoration(
                       hintText: 'Introduce tu usuario',
-                      contentPadding:
-                          EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                      contentPadding: EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 20.0),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(32.0)),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.blueAccent, width: 1.0),
+                        borderSide:
+                            BorderSide(color: tSecondaryColor, width: 1.0),
                         borderRadius: BorderRadius.all(Radius.circular(32.0)),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.blueAccent, width: 2.0),
+                        borderSide:
+                            BorderSide(color: tSecondaryColor, width: 2.0),
                         borderRadius: BorderRadius.all(Radius.circular(32.0)),
                       ),
                     ),
@@ -90,22 +107,26 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                     decoration: InputDecoration(
                       hintText: 'Introduce tu contraseña',
-                      contentPadding:
-                          EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                      contentPadding: EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 20.0),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(32.0)),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.blueAccent, width: 1.0),
+                        borderSide:
+                            BorderSide(color: tSecondaryColor, width: 1.0),
                         borderRadius: BorderRadius.all(Radius.circular(32.0)),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.blueAccent, width: 2.0),
+                        borderSide:
+                            BorderSide(color: tSecondaryColor, width: 2.0),
                         borderRadius: BorderRadius.all(Radius.circular(32.0)),
                       ),
                       suffixIcon: IconButton(
                         icon: Icon(
-                          _obscureText ? Icons.visibility : Icons.visibility_off,
+                          _obscureText
+                              ? Icons.visibility
+                              : Icons.visibility_off,
                         ),
                         onPressed: () {
                           setState(() {
@@ -119,7 +140,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 16.0),
                     child: Material(
-                      color: Colors.blueAccent,
+                      color: tSecondaryColor,
                       borderRadius: BorderRadius.all(Radius.circular(30.0)),
                       elevation: 5.0,
                       child: MaterialButton(
