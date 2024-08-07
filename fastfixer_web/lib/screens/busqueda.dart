@@ -135,98 +135,101 @@ class _SearchPageState extends State<SearchPage> {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 50.0),
             child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Container(
-                width: MediaQuery.of(context).size.width * 0.8 -
-                    50, // 4/5 de la pantalla menos el padding
-                child: DataTable(
-                  headingRowColor:
-                      MaterialStateProperty.all<Color>(Colors.black),
-                  headingTextStyle: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                  columns: const [
-                    DataColumn(label: Text('Perfil')),
-                    DataColumn(label: Text('Nombre')),
-                    DataColumn(label: Text('Especialidad')),
-                    DataColumn(label: Text('Teléfono')),
-                    DataColumn(label: Text('Empresa')),
-                    DataColumn(label: Text('Acciones')),
-                  ],
-                  rows: results.map((document) {
-                    final data = document.data() as Map<String, dynamic>;
-                    final imageUrl = data['perfil_avatar'];
+              scrollDirection: Axis.vertical,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.8 -
+                      50, // 4/5 de la pantalla menos el padding
+                  child: DataTable(
+                    headingRowColor:
+                        MaterialStateProperty.all<Color>(Colors.black),
+                    headingTextStyle: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                    columns: const [
+                      DataColumn(label: Text('Perfil')),
+                      DataColumn(label: Text('Nombre')),
+                      DataColumn(label: Text('Especialidad')),
+                      DataColumn(label: Text('Teléfono')),
+                      DataColumn(label: Text('Empresa')),
+                      DataColumn(label: Text('Acciones')),
+                    ],
+                    rows: results.map((document) {
+                      final data = document.data() as Map<String, dynamic>;
+                      final imageUrl = data['perfil_avatar'];
 
-                    return DataRow(
-                      cells: [
-                        DataCell(
-                          CircleAvatar(
-                            radius: 20,
-                            backgroundColor: tSecondaryColor,
-                            backgroundImage:
-                                imageUrl != null && imageUrl.isNotEmpty
-                                    ? NetworkImage(imageUrl)
-                                    : null,
-                            child: imageUrl == null || imageUrl.isEmpty
-                                ? Icon(
-                                    Icons.person,
-                                    size: 20,
-                                    color: Colors.black,
-                                  )
-                                : null,
+                      return DataRow(
+                        cells: [
+                          DataCell(
+                            CircleAvatar(
+                              radius: 20,
+                              backgroundColor: tSecondaryColor,
+                              backgroundImage:
+                                  imageUrl != null && imageUrl.isNotEmpty
+                                      ? NetworkImage(imageUrl)
+                                      : null,
+                              child: imageUrl == null || imageUrl.isEmpty
+                                  ? Icon(
+                                      Icons.person,
+                                      size: 20,
+                                      color: Colors.black,
+                                    )
+                                  : null,
+                            ),
                           ),
-                        ),
-                        DataCell(
-                            Text('${data['nombre']} ${data['apellidos']}')),
-                        DataCell(Text('${data['especialidad']}')),
-                        DataCell(Text('${data['telefono']}')),
-                        DataCell(Text('${data['nombre_empresa']}')),
-                        DataCell(
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                icon: Icon(Icons.edit),
-                                onPressed: () {
-                                  _editRecord(
-                                    document.id,
-                                    data,
-                                  );
-                                },
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.delete),
-                                onPressed: () {
-                                  _deleteRecord(
-                                    document.id,
-                                    data['nombre'],
-                                    data['apellidos'],
-                                    data['especialidad'],
-                                    data['telefono'],
-                                    data['nombre_empresa'],
-                                  );
-                                },
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.file_copy_outlined),
-                                onPressed: () {
-                                  _deleteRecord(
-                                    document.id,
-                                    data['nombre'],
-                                    data['apellidos'],
-                                    data['especialidad'],
-                                    data['telefono'],
-                                    data['nombre_empresa'],
-                                  );
-                                },
-                              )
-                            ],
+                          DataCell(
+                              Text('${data['nombre']} ${data['apellidos']}')),
+                          DataCell(Text('${data['especialidad']}')),
+                          DataCell(Text('${data['telefono']}')),
+                          DataCell(Text('${data['nombre_empresa']}')),
+                          DataCell(
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: Icon(Icons.edit),
+                                  onPressed: () {
+                                    _editRecord(
+                                      document.id,
+                                      data,
+                                    );
+                                  },
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.delete),
+                                  onPressed: () {
+                                    _deleteRecord(
+                                      document.id,
+                                      data['nombre'],
+                                      data['apellidos'],
+                                      data['especialidad'],
+                                      data['telefono'],
+                                      data['nombre_empresa'],
+                                    );
+                                  },
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.file_copy_outlined),
+                                  onPressed: () {
+                                    _deleteRecord(
+                                      document.id,
+                                      data['nombre'],
+                                      data['apellidos'],
+                                      data['especialidad'],
+                                      data['telefono'],
+                                      data['nombre_empresa'],
+                                    );
+                                  },
+                                )
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    );
-                  }).toList(),
+                        ],
+                      );
+                    }).toList(),
+                  ),
                 ),
               ),
             ),

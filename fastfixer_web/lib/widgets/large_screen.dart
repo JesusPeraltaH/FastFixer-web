@@ -20,15 +20,18 @@ class _LargeScreenState extends State<LargeScreen> {
     setState(() {
       switch (page) {
         case 'Contratista 1':
-          _currentPage = SearchPage();
+          _currentPage = Homepage();
           break;
         case 'Contratista 2':
-          _currentPage = Contratistas();
+          _currentPage = SearchPage();
           break;
         case 'Contratista 3':
-          _currentPage = Servicios();
+          _currentPage = Contratistas();
           break;
         case 'Contratista 4':
+          _currentPage = Servicios();
+          break;
+        case 'Contratista 5':
           _currentPage = SearchPageSer();
           break;
         default:
@@ -48,6 +51,19 @@ class _LargeScreenState extends State<LargeScreen> {
             color: Colors.black, // Color de fondo de la barra lateral
             child: ListView(
               children: [
+                ListTile(
+                  leading: Icon(Icons.home_rounded,
+                      color: Colors.white), // Icono a la izquierda
+                  title: CustomText(
+                    text: "Home",
+                    size: 18,
+                    color: Colors.white,
+                    weight: FontWeight.normal,
+                  ),
+                  onTap: () => _navigateTo('Contratista 1'),
+                  contentPadding:
+                      EdgeInsets.zero, // Quitar el padding del contenido
+                ),
                 ExpansionTile(
                   leading: Icon(Icons.person, color: Colors.white),
                   title: CustomText(
@@ -73,7 +89,7 @@ class _LargeScreenState extends State<LargeScreen> {
                           color: Colors.white,
                           weight: FontWeight.normal,
                         ),
-                        onTap: () => _navigateTo('Contratista 1'),
+                        onTap: () => _navigateTo('Contratista 2'),
                         contentPadding:
                             EdgeInsets.zero, // Quitar el padding del contenido
                       ),
@@ -89,7 +105,7 @@ class _LargeScreenState extends State<LargeScreen> {
                           color: Colors.white,
                           weight: FontWeight.normal,
                         ),
-                        onTap: () => _navigateTo('Contratista 2'),
+                        onTap: () => _navigateTo('Contratista 3'),
                         contentPadding:
                             EdgeInsets.zero, // Quitar el padding del contenido
                       ),
@@ -121,7 +137,7 @@ class _LargeScreenState extends State<LargeScreen> {
                           color: Colors.white,
                           weight: FontWeight.normal,
                         ),
-                        onTap: () => _navigateTo('Contratista 4'),
+                        onTap: () => _navigateTo('Contratista 5'),
                         contentPadding:
                             EdgeInsets.zero, // Quitar el padding del contenido
                       ),
@@ -137,7 +153,7 @@ class _LargeScreenState extends State<LargeScreen> {
                           color: Colors.white,
                           weight: FontWeight.normal,
                         ),
-                        onTap: () => _navigateTo('Contratista 3'),
+                        onTap: () => _navigateTo('Contratista 4'),
                         contentPadding:
                             EdgeInsets.zero, // Quitar el padding del contenido
                       ),

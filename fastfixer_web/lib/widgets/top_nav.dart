@@ -1,5 +1,6 @@
 import 'package:fastfixer_web/constants/style.dart';
 import 'package:fastfixer_web/helpers/responsiveness.dart';
+import 'package:fastfixer_web/screens/home.dart';
 import 'package:fastfixer_web/widgets/custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
