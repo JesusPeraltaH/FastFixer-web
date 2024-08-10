@@ -39,6 +39,7 @@ class MyApp extends StatelessWidget {
     '/pantalla1': (context) => SearchPage(),
     '/pantalla2': (context) => Contratistas(),
     '/pantalla3': (context) => Servicios(),
+    '/pantalla4': (context) => Homepage(),
   };
 
   // This widget is the root of your application.

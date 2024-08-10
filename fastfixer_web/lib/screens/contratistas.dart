@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:fastfixer_web/theme/colors.dart';
 import 'package:fastfixer_web/theme/theme.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -188,50 +189,68 @@ class _RegistrationFormState extends State<RegistrationForm> {
     if (_formKey.currentState?.validate() ?? false) {
       _formKey.currentState?.save();
 
-      // Sube las imágenes a Firebase Storage
-      List<String> imageUrls = [];
-      if (_images != null) {
-        for (var file in _images!) {
-          String url = await uploadFile(file);
-          imageUrls.add(url);
+      try {
+        // Crea el usuario en Firebase Authentication
+        UserCredential userCredential =
+            await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: _correoController.text,
+          password: _contrasenaController.text,
+        );
+
+        // Obtén el UID del usuario creado
+        String uid = userCredential.user?.uid ?? '';
+
+        // Sube las imágenes a Firebase Storage
+        List<String> imageUrls = [];
+        if (_images != null) {
+          for (var file in _images!) {
+            String url = await uploadFile(file);
+            imageUrls.add(url);
+          }
         }
-      }
 
-      // Sube los documentos a Firebase Storage
-      List<String> documentUrls = [];
-      if (_documents != null) {
-        for (var file in _documents!) {
-          String url = await uploadFile(file);
-          documentUrls.add(url);
+        // Sube los documentos a Firebase Storage
+        List<String> documentUrls = [];
+        if (_documents != null) {
+          for (var file in _documents!) {
+            String url = await uploadFile(file);
+            documentUrls.add(url);
+          }
         }
+
+        // Sube la imagen de perfil a Firebase Storage
+        String? profileImageUrl;
+        if (_profileImage != null) {
+          profileImageUrl = await uploadFile(_profileImage!);
+        }
+
+        // Envía los datos a Firestore
+        await FirebaseFirestore.instance.collection('usuarios').doc(uid).set({
+          'uid': uid,
+          'nombre_empresa': _nempresaController.text,
+          'nombre': _nombreController.text,
+          'apellidos': _apellidosController.text,
+          'especialidad': _especialidad,
+          'direccion': _direccionController.text,
+          'telefono': _telefonoController.text,
+          'correo': _correoController.text,
+          'contrasena': _contrasenaController.text,
+          'tipo': 'Contratista',
+          'imagenes': imageUrls,
+          'documentos': documentUrls,
+          'perfil_avatar': profileImageUrl,
+        });
+
+        // Muestra un mensaje de éxito
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Registro exitoso')),
+        );
+      } catch (e) {
+        // Maneja errores de autenticación
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al registrar: ${e.toString()}')),
+        );
       }
-
-      // Sube la imagen de perfil a Firebase Storage
-      String? profileImageUrl;
-      if (_profileImage != null) {
-        profileImageUrl = await uploadFile(_profileImage!);
-      }
-
-      // Envía los datos a Firestore
-      await FirebaseFirestore.instance.collection('usuarios').add({
-        'nombre_empresa': _nempresaController.text,
-        'nombre': _nombreController.text,
-        'apellidos': _apellidosController.text,
-        'especialidad': _especialidad,
-        'direccion': _direccionController.text,
-        'telefono': _telefonoController.text,
-        'correo': _correoController.text,
-        'contrasena': _contrasenaController.text,
-        'tipo': 'Contratista',
-        'imagenes': imageUrls,
-        'documentos': documentUrls,
-        'perfil_avatar': profileImageUrl,
-      });
-
-      // Muestra un mensaje de éxito
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Registro exitoso')),
-      );
     }
   }
 
