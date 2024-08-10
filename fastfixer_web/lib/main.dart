@@ -6,6 +6,7 @@ import 'package:fastfixer_web/screens/contratistas.dart';
 import 'package:fastfixer_web/screens/home.dart';
 import 'package:fastfixer_web/screens/log.dart';
 import 'package:fastfixer_web/screens/servicios.dart';
+import 'package:fastfixer_web/theme/theme.dart';
 import 'package:fastfixer_web/widgets/small_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -32,7 +33,8 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   static final Map<String, WidgetBuilder> routes = {
-    '/': (context) =>LoginScreen(), // Ruta por defecto: SiteLayout como página principal
+    '/': (context) =>
+        LoginScreen(), // Ruta por defecto: SiteLayout como página principal
     '/pantalla': (context) => SiteLayout(),
     '/pantalla1': (context) => SearchPage(),
     '/pantalla2': (context) => Contratistas(),
@@ -45,16 +47,9 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Fast Fixer Dash ',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-          scaffoldBackgroundColor: Colors.white,
-          textTheme: GoogleFonts.mulishTextTheme(Theme.of(context).textTheme)
-              .apply(bodyColor: Colors.black),
-          useMaterial3: true,
-          pageTransitionsTheme: PageTransitionsTheme(builders: {
-            TargetPlatform.iOS: FadeUpwardsPageTransitionsBuilder(),
-            TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
-          }),
-          primaryColor: Colors.blue),
+      theme: TAppTheme.lightTheme,
+      darkTheme: TAppTheme.darkTheme,
+      themeMode: ThemeMode.light,
       initialRoute: "/",
       routes: routes,
     );
