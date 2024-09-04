@@ -42,53 +42,63 @@ class _HomepageState extends State<Homepage> {
 
   void _startFetchingData() {
     Future.doWhile(() async {
-      await Future.delayed(Duration(seconds: 10));
-      if (_streamController.isClosed) return false;
-      final data = await _fetchData();
-      _streamController.add(data);
+      try {
+        await Future.delayed(Duration(seconds: 10));
+        if (_streamController.isClosed) return false;
+
+        final data = await _fetchData();
+        _streamController.add(data);
+      } catch (e) {
+        _streamController.addError('Error al cargar los datos: $e');
+        return false; // Detener el bucle en caso de error
+      }
       return true;
     });
   }
 
   Future<List<Map<String, dynamic>>> _fetchData() async {
-    final queueSnapshot =
-        await FirebaseFirestore.instance.collection('queue').get();
-    final userSnapshot =
-        await FirebaseFirestore.instance.collection('usuarios').get();
+    try {
+      final queueSnapshot =
+          await FirebaseFirestore.instance.collection('queue').get();
+      final userSnapshot =
+          await FirebaseFirestore.instance.collection('usuarios').get();
 
-    final List<Map<String, dynamic>> queueData = queueSnapshot.docs
-        .map((doc) => {
-              'id': doc.id,
-              'data': doc.data(),
-            })
-        .toList();
+      final List<Map<String, dynamic>> queueData = queueSnapshot.docs
+          .map((doc) => {
+                'id': doc.id,
+                'data': doc.data(),
+              })
+          .toList();
 
-    final List<Map<String, dynamic>> userData =
-        userSnapshot.docs.map((doc) => {'uid': doc.id, ...doc.data()}).toList();
+      final List<Map<String, dynamic>> userData = userSnapshot.docs
+          .map((doc) => {'uid': doc.id, ...doc.data()}).toList();
 
-    List<Map<String, dynamic>> combinedData = [];
+      List<Map<String, dynamic>> combinedData = [];
 
-    for (var queueDoc in queueData) {
-      Map<String, dynamic> userDoc = userData.firstWhere(
-        (user) => user['uid'] == queueDoc['data']?['contratistaId'],
-        orElse: () => <String, dynamic>{},
-      );
+      for (var queueDoc in queueData) {
+        Map<String, dynamic> userDoc = userData.firstWhere(
+          (user) => user['uid'] == queueDoc['data']?['contratistaId'],
+          orElse: () => <String, dynamic>{},
+        );
 
-      if (userDoc.isNotEmpty) {
-        combinedData.add({
-          'nombre_empresa': userDoc['nombre_empresa'] ?? '',
-          'especialidad': userDoc['especialidad'] ?? '',
-          'isContacted':
-              ((queueDoc['data'] as Map<String, dynamic>?)?['isContacted'] ??
-                      false)
-                  ? 'Confirmado'
-                  : 'Pendiente por confirmar',
-          'queueId': queueDoc['id'],
-        });
+        if (userDoc.isNotEmpty) {
+          combinedData.add({
+            'nombre_empresa': userDoc['nombre_empresa'] ?? '',
+            'especialidad': userDoc['especialidad'] ?? '',
+            'isContacted':
+                ((queueDoc['data'] as Map<String, dynamic>?)?['isContacted'] ??
+                        false)
+                    ? 'Confirmado'
+                    : 'Pendiente por confirmar',
+            'queueId': queueDoc['id'],
+          });
+        }
       }
-    }
 
-    return combinedData;
+      return combinedData;
+    } catch (e) {
+      throw Exception('Error al obtener los datos de Firestore: $e');
+    }
   }
 
   @override
@@ -144,6 +154,12 @@ class _HomepageState extends State<Homepage> {
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());
+                  }
+
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text('Error: ${snapshot.error}'),
+                    );
                   }
 
                   if (!snapshot.hasData || snapshot.data!.isEmpty) {

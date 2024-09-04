@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:fastfixer_web/layout.dart';
 import 'package:fastfixer_web/screens/busqueda.dart';
 import 'package:fastfixer_web/screens/contratistas.dart';
